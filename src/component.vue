@@ -11,6 +11,9 @@
         'elder__input-field--prefixed': hasPrefix, 
         'elder__input-field--suffixed': hasSuffix,
         'elder__input-field--focus': focused,
+        'elder__input-field--disabled': disabled,
+        'elder__input-field--readonly': readonly,
+        'elder__input-field--valid': valid,
       }"
     >
       <label :for="id" v-if="hasPrefix" class="elder__input-prefix">
@@ -21,13 +24,15 @@
       </label>
       <textarea 
         v-if="!mask && type === 'textarea'" 
-        v-model="valueComp" 
+        v-model="valueComp"
+        ref="input"
         :id="id"
         class="elder__input-value"
         :placeholder="placeholder" 
         :required="required" 
         :readonly="readonly" 
         :autofocus="autofocus" 
+        :pattern="pattern"
         :class="alignmentClass"
         @focus="focused = true"
         @blur="focused = false"
@@ -35,6 +40,7 @@
       <input 
         v-else-if="!mask" 
         v-model="valueComp" 
+        ref="input"
         :type="type" 
         :id="id"
         class="elder__input-value"
@@ -44,12 +50,14 @@
         :required="required" 
         :autofocus="autofocus" 
         :class="alignmentClass"
+        :pattern="pattern"
         @focus="focused = true" 
         @blur="focused = false" 
       />
       <i-mask-component
         v-else
         v-model="valueComp"
+        ref="input"
         :unmask="mask.unmask"
         :thousandsSeparator="mask.thousandsSeparator"
         :mask="mask.mask"
@@ -65,6 +73,9 @@
         @focus.native="focused = true" 
         @blur.native="focused = false" 
       />
+      <label v-if="valid" :for="id" class="elder__input-validation">
+        <fa :icon="['fas', 'check-circle']"></fa>
+      </label>
       <label :for="id" v-if="hasSuffix" class="elder__input-suffix">
         <slot name="suffix">{{ suffix }}</slot>
       </label>
@@ -77,6 +88,8 @@ import { DateToInputDateString, DateToInputTimeString, InputTimeStringToDate, Co
 import { FontAwesomeIcon as Fa } from '@fortawesome/vue-fontawesome'
 import { IMaskComponent } from 'vue-imask'
 
+import './icons'
+
 export default {
   props: {
     value: [String, Number, Date],
@@ -87,9 +100,11 @@ export default {
     },
     disabled: Boolean,
     mask: Object,
+    validate: Boolean,
     readonly: Boolean,
     required: Boolean,
     autofocus: Boolean,
+    pattern: String,
     placeholder: String,
     prefix: String,
     suffix: String,
@@ -122,6 +137,7 @@ export default {
         return this.value
       },
       set(val) {
+        this.validateValue()
         if (this.type === 'number')
           val = parseFloat(val.replace(new RegExp(',', 'g'), '.').replace(new RegExp('[^\\d.]', 'g'), ''))
         if (this.type === 'date') val = new Date(val)
@@ -134,10 +150,21 @@ export default {
     return {
       id: null,
       focused: false,
+      valid: false,
     }
+  },
+  methods: {
+    validateValue() {
+      let target = this.$refs.input.$el ? this.$refs.input.$el : this.$refs.input
+      if (!target.value || !this.validate) return
+      this.valid = target.checkValidity()
+    },
   },
   created() {
     this.id = this._uid
+  },
+  mounted() {
+    this.validateValue()
   },
   components: {
     Fa,
@@ -151,6 +178,7 @@ export default {
 
 $border-color: #eaeaea;
 $input-background: lighten($border-color, 4%);
+$spacing: 1.1em;
 
 .elder__input {
   &-label {
@@ -169,10 +197,20 @@ $input-background: lighten($border-color, 4%);
     display: flex;
     position: relative;
     border: 1px solid $border-color;
+    border-radius: $border-radius;
+    overflow: hidden;
     background-color: white;
 
     &--focus {
       border-color: $primary;
+    }
+
+    &--readonly .elder__input-value {
+      color: rgba($text-color, 0.6);
+    }
+
+    &--disabled {
+      background-color: lighten($input-background, 2%);
     }
   }
 
@@ -188,7 +226,7 @@ $input-background: lighten($border-color, 4%);
 
   &-suffix,
   &-prefix {
-    padding: 1em;
+    padding: $spacing;
     background-color: $input-background;
     color: darken($border-color, 25%);
   }
@@ -203,11 +241,18 @@ $input-background: lighten($border-color, 4%);
     flex-shrink: 0;
   }
 
+  &-validation {
+    color: $success;
+    display: flex;
+    align-items: center;
+    padding-right: $spacing;
+  }
+
   &-icon {
     display: flex;
     justify-content: center;
     align-items: center;
-    padding-left: 1em;
+    padding-left: $spacing;
 
     & * {
       opacity: 0.5;
@@ -216,7 +261,7 @@ $input-background: lighten($border-color, 4%);
 
   &-value {
     font: inherit;
-    padding: 1em;
+    padding: $spacing;
     border: none;
     background-color: transparent;
     outline: none;
@@ -238,14 +283,6 @@ $input-background: lighten($border-color, 4%);
     &:-moz-placeholder {
       color: $text-color;
       opacity: 0.4;
-    }
-
-    &[readonly] {
-      color: rgba($text-color, 0.6);
-    }
-
-    &:disabled {
-      background-color: lighten($input-background, 2%);
     }
   }
 }

@@ -28,7 +28,7 @@ function InputTimeStringToDate(val, date) {
 
 function ConvertToString(val) {
   if (typeof val === 'string') return val
-  if (val.toString) return val.toString()
+  if (val && val.toString) return val.toString()
 
   return val
 }
