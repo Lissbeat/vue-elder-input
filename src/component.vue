@@ -22,57 +22,49 @@
       <label v-if="icon" :for="id" class="elder__input-icon">
         <fa v-if="icon" :icon="icon"></fa>
       </label>
-      <textarea 
-        v-if="!mask && type === 'textarea'" 
-        v-model="valueComp"
-        ref="input"
-        :id="id"
-        class="elder__input-value"
-        :placeholder="placeholder" 
-        :required="required" 
-        :readonly="readonly" 
-        :autofocus="autofocus" 
-        :pattern="pattern"
-        :class="alignmentClass"
-        @focus="focused = true"
-        @blur="focused = false"
-      ></textarea>  
-      <input 
-        v-else-if="!mask" 
-        v-model="valueComp" 
-        ref="input"
-        :type="type" 
-        :id="id"
-        class="elder__input-value"
-        :disabled="disabled" 
-        :placeholder="placeholder" 
-        :readonly="readonly" 
-        :required="required" 
-        :autofocus="autofocus" 
-        :class="alignmentClass"
-        :pattern="pattern"
-        @focus="focused = true" 
-        @blur="focused = false" 
-      />
-      <i-mask-component
-        v-else
-        v-model="valueComp"
-        ref="input"
-        :unmask="mask.unmask"
-        :thousandsSeparator="mask.thousandsSeparator"
-        :mask="mask.mask"
-        :placeholderChar="mask.placeholderChar"
-        :id="id"
-        class="elder__input-value"
-        :disabled="disabled" 
-        :placeholder="placeholder" 
-        :readonly="readonly" 
-        :required="required" 
-        :autofocus="autofocus" 
-        :class="alignmentClass"
-        @focus.native="focused = true" 
-        @blur.native="focused = false" 
-      />
+      <div class="elder__input-value">
+        <slot>
+          <textarea 
+            v-if="!mask && type === 'textarea'" 
+            v-model="valueComp"
+            :id="id"
+            :placeholder="placeholder" 
+            :required="required" 
+            :readonly="readonly" 
+            :autofocus="autofocus" 
+            :pattern="pattern"
+            :class="alignmentClass"
+          ></textarea>  
+          <input 
+            v-else-if="!mask" 
+            v-model="valueComp"
+            :type="type" 
+            :id="id"
+            :disabled="disabled" 
+            :placeholder="placeholder" 
+            :readonly="readonly" 
+            :required="required" 
+            :autofocus="autofocus" 
+            :class="alignmentClass"
+            :pattern="pattern"
+          />
+          <i-mask-component
+            v-else
+            v-model="valueComp"
+            :unmask="mask.unmask"
+            :thousandsSeparator="mask.thousandsSeparator"
+            :mask="mask.mask"
+            :placeholderChar="mask.placeholderChar"
+            :id="id"
+            :disabled="disabled" 
+            :placeholder="placeholder" 
+            :readonly="readonly" 
+            :required="required" 
+            :autofocus="autofocus" 
+            :class="alignmentClass"
+          />
+        </slot>
+      </div>
       <label v-if="valid" :for="id" class="elder__input-validation">
         <fa :icon="['fas', 'check-circle']"></fa>
       </label>
@@ -155,16 +147,40 @@ export default {
   },
   methods: {
     validateValue() {
-      let target = this.$refs.input.$el ? this.$refs.input.$el : this.$refs.input
-      if (!target.value || !this.validate) return
+      let target = this.getInputElement()
+      if (!target || !target.value || !this.validate) return
       this.valid = target.checkValidity()
+    },
+    getInputElement() {
+      let target = this.$el.querySelector('.elder__input-value')
+      if (!target) return
+      target = target.firstChild
+      if (!['TEXTAREA', 'INPUT'].includes(target.tagName)) target = target.querySelector('input')
+
+      return target
     },
   },
   created() {
     this.id = this._uid
   },
   mounted() {
+    let target = this.getInputElement()
+
+    if (target) {
+      target._vueElderFocus = () => (this.focused = true)
+      target._vueElderBlur = () => (this.focused = false)
+      target.addEventListener('focus', target._vueElderFocus)
+      target.addEventListener('blur', target._vueElderBlur)
+    }
+
     this.validateValue()
+  },
+  beforeDestroy() {
+    let target = this.getInputElement()
+    if (target) {
+      target.removeEventListener('focus', target._vueElderFocus)
+      target.removeEventListener('blur', target._vueElderBlur)
+    }
   },
   components: {
     Fa,
@@ -260,29 +276,35 @@ $spacing: 1.1em;
   }
 
   &-value {
-    font: inherit;
-    padding: $spacing;
-    border: none;
-    background-color: transparent;
-    outline: none;
-    -webkit-appearance: none;
+    display: flex;
     flex-grow: 1;
 
-    &::-webkit-input-placeholder {
-      color: $text-color;
-      opacity: 0.4;
-    }
-    &::-moz-placeholder {
-      color: $text-color;
-      opacity: 0.4;
-    }
-    &:-ms-input-placeholder {
-      color: $text-color;
-      opacity: 0.4;
-    }
-    &:-moz-placeholder {
-      color: $text-color;
-      opacity: 0.4;
+    input,
+    textarea {
+      font: inherit;
+      padding: $spacing;
+      border: none;
+      background-color: transparent;
+      outline: none;
+      -webkit-appearance: none;
+      flex-grow: 1;
+
+      &::-webkit-input-placeholder {
+        color: $text-color;
+        opacity: 0.4;
+      }
+      &::-moz-placeholder {
+        color: $text-color;
+        opacity: 0.4;
+      }
+      &:-ms-input-placeholder {
+        color: $text-color;
+        opacity: 0.4;
+      }
+      &:-moz-placeholder {
+        color: $text-color;
+        opacity: 0.4;
+      }
     }
   }
 }
