@@ -2,85 +2,71 @@
   <div class="elder__input">
     <label :for="id" v-if="label" class="elder__input-label">
       {{ label }}
-      <span v-if="required" class="elder__input-label-required">*</span>
+      <span v-if="isRequired" class="elder__input-label-required">*</span>
     </label>
-    <div 
-      class="elder__input-field" 
-      :class="{ 
-        'elder__input-field--icon': icon, 
-        'elder__input-field--prefixed': hasPrefix, 
-        'elder__input-field--suffixed': hasSuffix,
-        'elder__input-field--focus': focused,
-        'elder__input-field--disabled': disabled,
-        'elder__input-field--readonly': readonly,
-        'elder__input-field--valid': valid,
-      }"
-    >
-      <label :for="id" v-if="hasPrefix" class="elder__input-prefix">
-        <slot name="prefix">{{ prefix }}</slot>
-      </label>
-      <label v-if="icon" :for="id" class="elder__input-icon">
-        <fa v-if="icon" :icon="icon"></fa>
-      </label>
-      <div class="elder__input-value">
-        <slot>
-          <textarea 
-            v-if="!mask && type === 'textarea'" 
-            v-model="valueComp"
-            :id="id"
-            :placeholder="placeholder" 
-            :required="required" 
-            :readonly="readonly" 
-            :autofocus="autofocus" 
-            :pattern="pattern"
-            :class="alignmentClass"
-          ></textarea>  
-          <input 
-            v-else-if="!mask" 
-            v-model="valueComp"
-            :type="type" 
-            :id="id"
-            :disabled="disabled" 
-            :placeholder="placeholder" 
-            :readonly="readonly" 
-            :required="required" 
-            :autofocus="autofocus" 
-            :class="alignmentClass"
-            :pattern="pattern"
+    <div class="elder__input-wrapper">
+      <slot name="left"></slot>
+      <div
+        class="elder__input-field"
+        :class="{
+          'elder__input-field--icon': icon,
+          'elder__input-field--prefixed': hasPrefix,
+          'elder__input-field--suffixed': hasSuffix,
+          'elder__input-field--focus': focused,
+          'elder__input-field--disabled': isDisabled,
+          'elder__input-field--readonly': isReadonly,
+          'elder__input-field--valid': valid,
+          'elder__input-field--invalid': !valid
+        }"
+      >
+        <label :for="id" v-if="hasPrefix" class="elder__input-prefix">
+          <slot name="prefix">{{ prefix }}</slot>
+        </label>
+        <label v-if="hasIcon" :for="id" class="elder__input-icon">
+          <slot name="icon"><font-awesome-icon v-if="icon" :icon="icon"/></slot>
+        </label>
+        <div class="elder__input-value">
+          <slot>
+            <component
+              :is="component"
+              :value="valueComp"
+              v-on="{
+                ...$listeners,
+                input: update
+              }"
+              v-bind="{ ...$attrs, ...mask, type, id }"
+              :class="['elder__input--alignment-' + this.align]"
+              ref="input"
+              @focus="onFocus"
+              @blur="onBlur"
+            />
+          </slot>
+        </div>
+        <label v-if="hasValidation" :for="id" class="elder__input-validation">
+          <font-awesome-icon
+            :icon="['fas', valid ? 'check-circle' : 'times-circle']"
           />
-          <i-mask-component
-            v-else
-            v-model="valueComp"
-            :unmask="mask.unmask"
-            :thousandsSeparator="mask.thousandsSeparator"
-            :mask="mask.mask"
-            :placeholderChar="mask.placeholderChar"
-            :id="id"
-            :disabled="disabled" 
-            :placeholder="placeholder" 
-            :readonly="readonly" 
-            :required="required" 
-            :autofocus="autofocus" 
-            :class="alignmentClass"
-          />
-        </slot>
+        </label>
+        <label :for="id" v-if="hasSuffix" class="elder__input-suffix">
+          <slot name="suffix">{{ suffix }}</slot>
+        </label>
       </div>
-      <label v-if="valid" :for="id" class="elder__input-validation">
-        <fa :icon="['fas', 'check-circle']"></fa>
-      </label>
-      <label :for="id" v-if="hasSuffix" class="elder__input-suffix">
-        <slot name="suffix">{{ suffix }}</slot>
-      </label>
+      <slot name="right"></slot>
+    </div>
+    <div
+      v-if="hasValidation && hasValidationMessage && !valid"
+      class="elder__input-validation-message"
+    >
+      <slot name="validation-message">{{ validationMessage }}</slot>
     </div>
   </div>
 </template>
 
 <script>
-import { DateToInputDateString, DateToInputTimeString, InputTimeStringToDate, ConvertToString } from './utils'
-import { FontAwesomeIcon as Fa } from '@fortawesome/vue-fontawesome'
-import { IMaskComponent } from 'vue-imask'
+import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
+import { IMaskComponent } from "vue-imask";
 
-import './icons'
+import "./icons";
 
 export default {
   props: {
@@ -88,125 +74,134 @@ export default {
     label: String,
     type: {
       type: String,
-      default: 'text',
+      default: "text"
     },
-    disabled: Boolean,
-    mask: Object,
-    validate: Boolean,
-    readonly: Boolean,
-    required: Boolean,
-    autofocus: Boolean,
-    pattern: String,
-    placeholder: String,
+    mask: {
+      type: Object,
+      default: () => ({})
+    },
+    validate: [Boolean, Function],
+    validationMessage: String,
     prefix: String,
     suffix: String,
     icon: [Array, String],
     align: {
       type: String,
-      default: 'left',
-      enum: ['left', 'right', 'center'],
-    },
+      default: "left",
+      enum: ["left", "right", "center"]
+    }
+  },
+  watch: {
+    value: {
+      handler: "validateValue"
+    }
   },
   computed: {
+    valueComp() {
+      return this.value.toString();
+    },
+    component() {
+      if (this.hasMask) return "i-mask-component";
+      if (this.type === "textarea") return "textarea";
+      return "input";
+    },
+    hasMask() {
+      return this.mask.mask;
+    },
     hasPrefix() {
-      return this.prefix || this.$slots.prefix
+      return this.prefix || this.$slots.prefix;
     },
     hasSuffix() {
-      return this.suffix || this.$slots.suffix
+      return this.suffix || this.$slots.suffix;
     },
-    inputElementType() {
-      if (this.type === 'textarea') return 'textarea'
-      return 'input'
+    hasValidationMessage() {
+      return this.validationMessage || this.$slots["validation-message"];
     },
-    alignmentClass() {
-      return 'elder__input--alignment-' + this.align
+    hasIcon() {
+      return this.icon || this.$slots.icon;
     },
-    valueComp: {
-      get() {
-        if (this.mask) return ConvertToString(this.value)
-        if (this.type === 'date') return DateToInputDateString(this.value)
-        if (this.type === 'time') return DateToInputTimeString(this.value)
-        return this.value
-      },
-      set(val) {
-        this.validateValue()
-        if (this.type === 'number')
-          val = parseFloat(val.replace(new RegExp(',', 'g'), '.').replace(new RegExp('[^\\d.]', 'g'), ''))
-        if (this.type === 'date') val = new Date(val)
-        if (this.type === 'time') val = InputTimeStringToDate(val, this.value)
-        this.$emit('input', val)
-      },
+    hasValidation() {
+      if (!this.isRequired && !this.value) return false;
+      return this.visited && this.validate;
     },
+    isDisabled() {
+      return ["", true, "true"].includes(this.$attrs.disabled);
+    },
+    isRequired() {
+      return ["", true, "true"].includes(this.$attrs.required);
+    },
+    isReadonly() {
+      return ["", true, "true"].includes(this.$attrs.readonly);
+    }
   },
   data() {
     return {
       id: null,
       focused: false,
-      valid: false,
-    }
+      visited: false,
+      valid: false
+    };
   },
   methods: {
+    update(val) {
+      let result = val.target ? val.target.value : val;
+      if (this.type === "number" || this.mask.mask === Number)
+        result = parseFloat(result);
+      this.$emit("input", result);
+    },
     validateValue() {
-      let target = this.getInputElement()
-      if (!target || !target.value || !this.validate) return
-      this.valid = target.checkValidity()
-    },
-    getInputElement() {
-      let target = this.$el.querySelector('.elder__input-value')
-      if (!target) return
-      target = target.firstChild
-      if (!['TEXTAREA', 'INPUT'].includes(target.tagName)) target = target.querySelector('input')
+      if (!this.validate) return;
 
-      return target
+      if (typeof this.validate === "function")
+        return (this.valid = this.validate(this.value));
+
+      this.valid = (this.$refs.input.$el || this.$refs.input).checkValidity();
     },
+    onFocus() {
+      this.focused = true;
+    },
+    onBlur() {
+      this.visited = true;
+      this.focused = false;
+    }
   },
   created() {
-    this.id = this._uid
+    this.id = this._uid;
+    if (this.value) this.visited = true;
   },
   mounted() {
-    let target = this.getInputElement()
-
-    if (target) {
-      target._vueElderFocus = () => (this.focused = true)
-      target._vueElderBlur = () => (this.focused = false)
-      target.addEventListener('focus', target._vueElderFocus)
-      target.addEventListener('blur', target._vueElderBlur)
-    }
-
-    this.validateValue()
-  },
-  beforeDestroy() {
-    let target = this.getInputElement()
-    if (target) {
-      target.removeEventListener('focus', target._vueElderFocus)
-      target.removeEventListener('blur', target._vueElderBlur)
-    }
+    this.validateValue();
   },
   components: {
-    Fa,
-    IMaskComponent,
-  },
-}
+    FontAwesomeIcon,
+    IMaskComponent
+  }
+};
 </script>
 
 <style lang="scss">
-@import '~node_modules/vue-elder-defaults/styles/variables';
+@import "~node_modules/vue-elder-defaults/styles/variables";
 
 $border-color: #eaeaea;
 $input-background: lighten($border-color, 4%);
 $spacing: 1.1em;
+$component: "elder__input";
 
-.elder__input {
+.#{$component} {
+  text-align: left;
+
   &-label {
+    display: block;
     font-weight: bold;
+    margin-bottom: 0.5em;
 
     &-required {
       color: $error;
     }
+  }
 
-    & + .elder__input-field {
-      margin-top: 0.5em;
-    }
+  &-wrapper {
+    display: flex;
   }
 
   &-field {
@@ -215,18 +210,31 @@ $spacing: 1.1em;
     border: 1px solid $border-color;
     border-radius: $border-radius;
     overflow: hidden;
+    flex-grow: 1;
     background-color: white;
+
+    &:not(:first-child) {
+      margin-left: 0.5em;
+    }
+
+    &:not(:last-child) {
+      margin-right: 0.5em;
+    }
 
     &--focus {
       border-color: $primary;
     }
 
-    &--readonly .elder__input-value {
+    &--readonly .#{$component}-value {
       color: rgba($text-color, 0.6);
     }
 
     &--disabled {
       background-color: lighten($input-background, 2%);
+    }
+
+    &.#{$component}-field--invalid {
+      border-color: lighten($error, 25%);
     }
   }
 
@@ -258,10 +266,23 @@ $spacing: 1.1em;
   }
 
   &-validation {
-    color: $success;
     display: flex;
     align-items: center;
     padding-right: $spacing;
+
+    .#{$component}-field--invalid & {
+      color: $error;
+    }
+
+    .#{$component}-field--valid & {
+      color: $success;
+    }
+  }
+
+  &-validation-message {
+    color: $error;
+    margin-top: 0.5em;
+    font-size: 0.8em;
   }
 
   &-icon {
@@ -283,6 +304,7 @@ $spacing: 1.1em;
     textarea {
       font: inherit;
       padding: $spacing;
+      color: inherit;
       border: none;
       background-color: transparent;
       outline: none;
