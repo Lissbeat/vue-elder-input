@@ -23,7 +23,9 @@
           <slot name="prefix">{{ prefix }}</slot>
         </label>
         <label v-if="hasIcon" :for="id" class="elder__input-icon">
-          <slot name="icon"><font-awesome-icon v-if="icon" :icon="icon"/></slot>
+          <slot name="icon">
+            <font-awesome-icon v-if="icon" :icon="icon" />
+          </slot>
         </label>
         <div class="elder__input-value">
           <slot>
@@ -43,9 +45,7 @@
           </slot>
         </div>
         <label v-if="hasValidation" :for="id" class="elder__input-validation">
-          <font-awesome-icon
-            :icon="['fas', valid ? 'check-circle' : 'times-circle']"
-          />
+          <font-awesome-icon :icon="['fas', valid ? 'check-circle' : 'times-circle']" />
         </label>
         <label :for="id" v-if="hasSuffix" class="elder__input-suffix">
           <slot name="suffix">{{ suffix }}</slot>
@@ -180,15 +180,21 @@ export default {
 </script>
 
 <style lang="scss">
-@import "~node_modules/vue-elder-defaults/styles/variables";
+.elder__input {
+  $component: "elder__input";
 
-$border-color: #eaeaea;
-$input-background: lighten($border-color, 4%);
-$spacing: 1.1em;
-$component: "elder__input";
+  $primary: #3a9acd !default;
+  $success: #33ca62 !default;
+  $error: #e83b35 !default;
+  $text-color: #222 !default;
+  $border-color: #eaeaea !default;
+  $border-radius: 3px !default;
+  $spacing: 1.1em;
 
-.#{$component} {
+  $input-color: lighten($border-color, 4%);
+
   text-align: left;
+  color: $text-color;
 
   &-label {
     display: block;
@@ -230,7 +236,7 @@ $component: "elder__input";
     }
 
     &--disabled {
-      background-color: lighten($input-background, 2%);
+      background-color: lighten($input-color, 2%);
     }
 
     &.#{$component}-field--invalid {
@@ -251,7 +257,7 @@ $component: "elder__input";
   &-suffix,
   &-prefix {
     padding: $spacing;
-    background-color: $input-background;
+    background-color: $input-color;
     color: darken($border-color, 25%);
   }
 
@@ -312,20 +318,16 @@ $component: "elder__input";
       flex-grow: 1;
 
       &::-webkit-input-placeholder {
-        color: $text-color;
-        opacity: 0.4;
+        color: rgba($text-color, 0.4);
       }
       &::-moz-placeholder {
-        color: $text-color;
-        opacity: 0.4;
+        color: rgba($text-color, 0.4);
       }
       &:-ms-input-placeholder {
-        color: $text-color;
-        opacity: 0.4;
+        color: rgba($text-color, 0.4);
       }
       &:-moz-placeholder {
-        color: $text-color;
-        opacity: 0.4;
+        color: rgba($text-color, 0.4);
       }
     }
   }
