@@ -15,8 +15,8 @@
           'elder__input-field--focus': focused,
           'elder__input-field--disabled': isDisabled,
           'elder__input-field--readonly': isReadonly,
-          'elder__input-field--valid': valid,
-          'elder__input-field--invalid': !valid
+          'elder__input-field--valid': hasValidation && valid,
+          'elder__input-field--invalid': hasValidation && !valid
         }"
       >
         <label :for="id" v-if="hasPrefix" class="elder__input-prefix">
