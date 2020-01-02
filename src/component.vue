@@ -65,6 +65,7 @@
 <script>
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { IMaskComponent } from "vue-imask";
+import { AttributeBoolean } from './utils'
 
 import "./icons";
 
@@ -124,15 +125,9 @@ export default {
       if (!this.isRequired && !this.value) return false;
       return this.visited && this.validate;
     },
-    isDisabled() {
-      return ["", true, "true"].includes(this.$attrs.disabled);
-    },
-    isRequired() {
-      return ["", true, "true"].includes(this.$attrs.required);
-    },
-    isReadonly() {
-      return ["", true, "true"].includes(this.$attrs.readonly);
-    }
+    isDisabled: AttributeBoolean('disabled'),
+    isRequired: AttributeBoolean('required'),
+    isReadonly: AttributeBoolean('readonly'),
   },
   data() {
     return {
