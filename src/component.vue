@@ -37,6 +37,7 @@
                 input: update
               }"
               v-bind="{ ...$attrs, ...mask, type, id }"
+              class="elder__input-element"
               :class="['elder__input--alignment-' + this.align]"
               ref="input"
               @focus="onFocus"
@@ -53,6 +54,7 @@
       </div>
       <slot name="right"></slot>
     </div>
+    <slot name="below"></slot>
     <div
       v-if="hasValidation && hasValidationMessage && !valid"
       class="elder__input-validation-message"
@@ -190,6 +192,8 @@ export default {
 
   text-align: left;
   color: $text-color;
+  display: flex;
+  flex-direction: column;
 
   &-label {
     display: block;
@@ -203,6 +207,7 @@ export default {
 
   &-wrapper {
     display: flex;
+    flex-grow: 1;
   }
 
   &-field {
@@ -299,30 +304,30 @@ export default {
   &-value {
     display: flex;
     flex-grow: 1;
+  }
 
-    input,
-    textarea {
-      font: inherit;
-      padding: $spacing;
-      color: inherit;
-      border: none;
-      background-color: transparent;
-      outline: none;
-      -webkit-appearance: none;
-      flex-grow: 1;
+  &-element {
+    font: inherit;
+    padding: $spacing;
+    color: inherit;
+    border: none;
+    background-color: transparent;
+    outline: none;
+    -webkit-appearance: none;
+    flex-grow: 1;
+    width: 100%;
 
-      &::-webkit-input-placeholder {
-        color: rgba($text-color, 0.4);
-      }
-      &::-moz-placeholder {
-        color: rgba($text-color, 0.4);
-      }
-      &:-ms-input-placeholder {
-        color: rgba($text-color, 0.4);
-      }
-      &:-moz-placeholder {
-        color: rgba($text-color, 0.4);
-      }
+    &::-webkit-input-placeholder {
+      color: rgba($text-color, 0.4);
+    }
+    &::-moz-placeholder {
+      color: rgba($text-color, 0.4);
+    }
+    &:-ms-input-placeholder {
+      color: rgba($text-color, 0.4);
+    }
+    &:-moz-placeholder {
+      color: rgba($text-color, 0.4);
     }
   }
 }
