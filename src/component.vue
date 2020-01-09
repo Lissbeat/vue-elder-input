@@ -210,7 +210,6 @@ export default {
     position: relative;
     border: 1px solid $border-color;
     border-radius: $border-radius;
-    overflow: hidden;
     flex-grow: 1;
     background-color: white;
 
