@@ -101,7 +101,8 @@ export default {
   },
   computed: {
     valueComp() {
-      return (this.value || "").toString();
+      if ([null, undefined].includes(this.value)) return "";
+      return this.value.toString();
     },
     component() {
       if (this.hasMask) return "i-mask-component";
