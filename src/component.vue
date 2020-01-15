@@ -296,10 +296,6 @@ export default {
     justify-content: center;
     align-items: center;
     padding-left: $spacing;
-
-    & * {
-      opacity: 0.5;
-    }
   }
 
   &-value {
