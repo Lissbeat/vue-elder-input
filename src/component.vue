@@ -46,7 +46,9 @@
           </slot>
         </div>
         <label v-if="hasValidation" :for="id" class="elder__input-validation">
-          <font-awesome-icon :icon="['fas', valid ? 'check-circle' : 'times-circle']" />
+          <font-awesome-icon
+            :icon="['fas', valid ? 'check-circle' : 'times-circle']"
+          />
         </label>
         <label :for="id" v-if="hasSuffix" class="elder__input-suffix">
           <slot name="suffix">{{ suffix }}</slot>
@@ -96,7 +98,11 @@ export default {
   },
   watch: {
     value: {
-      handler: "validateValue"
+      handler(val) {
+        if (this.valueComp) this.visited = true;
+        this.$nextTick(() => this.validateValue());
+      },
+      immediate: true
     }
   },
   computed: {
@@ -153,7 +159,8 @@ export default {
       if (typeof this.validate === "function")
         return (this.valid = this.validate(this.value));
 
-      this.valid = (this.$refs.input.$el || this.$refs.input).checkValidity();
+      if (this.$refs.input)
+        this.valid = (this.$refs.input.$el || this.$refs.input).checkValidity();
     },
     onFocus() {
       this.focused = true;
@@ -165,10 +172,6 @@ export default {
   },
   created() {
     this.id = this._uid;
-    if (this.value) this.visited = true;
-  },
-  mounted() {
-    this.validateValue();
   },
   components: {
     FontAwesomeIcon,
