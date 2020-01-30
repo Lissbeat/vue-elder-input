@@ -86,6 +86,7 @@ export default {
       default: () => ({})
     },
     validate: [Boolean, Function],
+    validateImmediate: Boolean,
     validationMessage: String,
     prefix: String,
     suffix: String,
@@ -99,8 +100,9 @@ export default {
   watch: {
     value: {
       handler(val) {
-        if (this.valueComp) this.visited = true;
         this.$nextTick(() => this.validateValue());
+        if ((val && this.validateImmediate) || val !== this.lastInternalUpdate)
+          this.visited = true;
       },
       immediate: true
     }
@@ -143,7 +145,8 @@ export default {
       id: null,
       focused: false,
       visited: false,
-      valid: false
+      valid: false,
+      lastInternalUpdate: undefined
     };
   },
   methods: {
@@ -151,6 +154,7 @@ export default {
       let result = val.target ? val.target.value : val;
       if (this.type === "number" || this.mask.mask === Number)
         result = parseFloat(result);
+      this.lastInternalUpdate = result;
       this.$emit("input", result);
     },
     validateValue() {
