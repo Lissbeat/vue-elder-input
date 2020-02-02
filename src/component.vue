@@ -16,7 +16,7 @@
           'elder__input-field--disabled': isDisabled,
           'elder__input-field--readonly': isReadonly,
           'elder__input-field--valid': hasValidation && valid,
-          'elder__input-field--invalid': hasValidation && !valid
+          'elder__input-field--invalid': hasValidation && !valid,
         }"
       >
         <label :for="id" v-if="hasPrefix" class="elder__input-prefix">
@@ -34,7 +34,7 @@
               :value="valueComp"
               v-on="{
                 ...$listeners,
-                input: update
+                input: update,
               }"
               v-bind="{ ...$attrs, ...mask, type, id }"
               class="elder__input-element"
@@ -46,9 +46,7 @@
           </slot>
         </div>
         <label v-if="hasValidation" :for="id" class="elder__input-validation">
-          <font-awesome-icon
-            :icon="['fas', valid ? 'check-circle' : 'times-circle']"
-          />
+          <font-awesome-icon :icon="['fas', valid ? 'check-circle' : 'times-circle']" />
         </label>
         <label :for="id" v-if="hasSuffix" class="elder__input-suffix">
           <slot name="suffix">{{ suffix }}</slot>
@@ -57,21 +55,18 @@
       <slot name="right"></slot>
     </div>
     <slot name="below"></slot>
-    <div
-      v-if="hasValidation && hasValidationMessage && !valid"
-      class="elder__input-validation-message"
-    >
+    <div v-if="hasValidation && hasValidationMessage && !valid" class="elder__input-validation-message">
       <slot name="validation-message">{{ validationMessage }}</slot>
     </div>
   </div>
 </template>
 
 <script>
-import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
-import { IMaskComponent } from "vue-imask";
-import { AttributeBoolean } from "./utils";
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { IMaskComponent } from 'vue-imask'
+import { AttributeBoolean } from './utils'
 
-import "./icons";
+import './icons'
 
 export default {
   props: {
@@ -79,11 +74,11 @@ export default {
     label: String,
     type: {
       type: String,
-      default: "text"
+      default: 'text',
     },
     mask: {
       type: Object,
-      default: () => ({})
+      default: () => ({}),
     },
     validate: [Boolean, Function],
     validateImmediate: Boolean,
@@ -93,52 +88,51 @@ export default {
     icon: [Array, String],
     align: {
       type: String,
-      default: "left",
-      enum: ["left", "right", "center"]
-    }
+      default: 'left',
+      enum: ['left', 'right', 'center'],
+    },
   },
   watch: {
     value: {
       handler(val) {
-        this.$nextTick(() => this.validateValue());
-        if ((val && this.validateImmediate) || val !== this.lastInternalUpdate)
-          this.visited = true;
+        this.$nextTick(() => this.validateValue())
+        if ((val && this.validateImmediate) || val != this.lastInternalUpdate) this.visited = true
       },
-      immediate: true
-    }
+      immediate: true,
+    },
   },
   computed: {
     valueComp() {
-      if ([null, undefined].includes(this.value)) return "";
-      return this.value.toString();
+      if ([null, undefined].includes(this.value)) return ''
+      return this.value.toString()
     },
     component() {
-      if (this.hasMask) return "i-mask-component";
-      if (this.type === "textarea") return "textarea";
-      return "input";
+      if (this.hasMask) return 'i-mask-component'
+      if (this.type === 'textarea') return 'textarea'
+      return 'input'
     },
     hasMask() {
-      return this.mask.mask;
+      return this.mask.mask
     },
     hasPrefix() {
-      return this.prefix || this.$slots.prefix;
+      return this.prefix || this.$slots.prefix
     },
     hasSuffix() {
-      return this.suffix || this.$slots.suffix;
+      return this.suffix || this.$slots.suffix
     },
     hasValidationMessage() {
-      return this.validationMessage || this.$slots["validation-message"];
+      return this.validationMessage || this.$slots['validation-message']
     },
     hasIcon() {
-      return this.icon || this.$slots.icon;
+      return this.icon || this.$slots.icon
     },
     hasValidation() {
-      if (!this.isRequired && !this.value) return false;
-      return this.visited && this.validate;
+      if (!this.isRequired && !this.value) return false
+      return this.visited && this.validate
     },
-    isDisabled: AttributeBoolean("disabled"),
-    isRequired: AttributeBoolean("required"),
-    isReadonly: AttributeBoolean("readonly")
+    isDisabled: AttributeBoolean('disabled'),
+    isRequired: AttributeBoolean('required'),
+    isReadonly: AttributeBoolean('readonly'),
   },
   data() {
     return {
@@ -146,47 +140,44 @@ export default {
       focused: false,
       visited: false,
       valid: false,
-      lastInternalUpdate: undefined
-    };
+      lastInternalUpdate: undefined,
+    }
   },
   methods: {
     update(val) {
-      let result = val.target ? val.target.value : val;
-      if (this.type === "number" || this.mask.mask === Number)
-        result = parseFloat(result);
-      this.lastInternalUpdate = result;
-      this.$emit("input", result);
+      let result = val.target ? val.target.value : val
+      if (this.type === 'number' || this.mask.mask === Number) result = parseFloat(result)
+      this.lastInternalUpdate = result
+      this.$emit('input', result)
     },
     validateValue() {
-      if (!this.validate) return;
+      if (!this.validate) return
 
-      if (typeof this.validate === "function")
-        return (this.valid = this.validate(this.value));
+      if (typeof this.validate === 'function') return (this.valid = this.validate(this.value))
 
-      if (this.$refs.input)
-        this.valid = (this.$refs.input.$el || this.$refs.input).checkValidity();
+      if (this.$refs.input) this.valid = (this.$refs.input.$el || this.$refs.input).checkValidity()
     },
     onFocus() {
-      this.focused = true;
+      this.focused = true
     },
     onBlur() {
-      this.visited = true;
-      this.focused = false;
-    }
+      this.visited = true
+      this.focused = false
+    },
   },
   created() {
-    this.id = this._uid;
+    this.id = this._uid
   },
   components: {
     FontAwesomeIcon,
-    IMaskComponent
-  }
-};
+    IMaskComponent,
+  },
+}
 </script>
 
 <style lang="scss">
 .elder__input {
-  $component: "elder__input";
+  $component: 'elder__input';
 
   $primary: #3a9acd !default;
   $success: #33ca62 !default;
