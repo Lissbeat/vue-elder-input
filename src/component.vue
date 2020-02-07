@@ -1,33 +1,33 @@
 <template>
-  <div class="elder__input">
-    <label :for="id" v-if="label" class="elder__input-label">
+  <div class="elder-input">
+    <label :for="id" v-if="label" class="elder-input__label">
       {{ label }}
-      <span v-if="isRequired" class="elder__input-label-required">*</span>
+      <span v-if="isRequired" class="elder-input__label-required">*</span>
     </label>
-    <div class="elder__input-wrapper">
+    <div class="elder-input__wrapper">
       <slot name="left"></slot>
       <div
-        class="elder__input-field"
+        class="elder-input__field"
         :class="{
-          'elder__input-field--icon': icon,
-          'elder__input-field--prefixed': hasPrefix,
-          'elder__input-field--suffixed': hasSuffix,
-          'elder__input-field--focus': focused,
-          'elder__input-field--disabled': isDisabled,
-          'elder__input-field--readonly': isReadonly,
-          'elder__input-field--valid': hasValidation && valid,
-          'elder__input-field--invalid': hasValidation && !valid,
+          'elder-input__field--icon': icon,
+          'elder-input__field--prefixed': hasPrefix,
+          'elder-input__field--suffixed': hasSuffix,
+          'elder-input__field--focus': focused,
+          'elder-input__field--disabled': isDisabled,
+          'elder-input__field--readonly': isReadonly,
+          'elder-input__field--valid': hasValidation && valid,
+          'elder-input__field--invalid': hasValidation && !valid,
         }"
       >
-        <label :for="id" v-if="hasPrefix" class="elder__input-prefix">
+        <label :for="id" v-if="hasPrefix" class="elder-input__prefix">
           <slot name="prefix">{{ prefix }}</slot>
         </label>
-        <label v-if="hasIcon" :for="id" class="elder__input-icon">
+        <label v-if="hasIcon" :for="id" class="elder-input__icon">
           <slot name="icon">
             <font-awesome-icon v-if="icon" :icon="icon" />
           </slot>
         </label>
-        <div class="elder__input-value">
+        <div class="elder-input__value">
           <slot>
             <component
               :is="component"
@@ -37,25 +37,25 @@
                 input: update,
               }"
               v-bind="{ ...$attrs, ...mask, type, id }"
-              class="elder__input-element"
-              :class="['elder__input--alignment-' + this.align]"
+              class="elder-input__element"
+              :class="['elder-input--alignment-' + this.align]"
               ref="input"
               @focus="onFocus"
               @blur="onBlur"
             />
           </slot>
         </div>
-        <label v-if="hasValidation" :for="id" class="elder__input-validation">
+        <label v-if="hasValidation" :for="id" class="elder-input__validation">
           <font-awesome-icon :icon="['fas', valid ? 'check-circle' : 'times-circle']" />
         </label>
-        <label :for="id" v-if="hasSuffix" class="elder__input-suffix">
+        <label :for="id" v-if="hasSuffix" class="elder-input__suffix">
           <slot name="suffix">{{ suffix }}</slot>
         </label>
       </div>
       <slot name="right"></slot>
     </div>
     <slot name="below"></slot>
-    <div v-if="hasValidation && hasValidationMessage && !valid" class="elder__input-validation-message">
+    <div v-if="hasValidation && hasValidationMessage && !valid" class="elder-input__validation-message">
       <slot name="validation-message">{{ validationMessage }}</slot>
     </div>
   </div>
@@ -108,7 +108,6 @@ export default {
     },
     component() {
       if (this.hasMask) return 'i-mask-component'
-      if (this.type === 'textarea') return 'textarea'
       return 'input'
     },
     hasMask() {
@@ -176,8 +175,8 @@ export default {
 </script>
 
 <style lang="scss">
-.elder__input {
-  $component: 'elder__input';
+.elder-input {
+  $component: 'elder-input';
 
   $primary: #3a9acd !default;
   $success: #33ca62 !default;
@@ -194,7 +193,7 @@ export default {
   display: flex;
   flex-direction: column;
 
-  &-label {
+  &__label {
     display: block;
     font-weight: bold;
     margin-bottom: 0.5em;
@@ -204,12 +203,12 @@ export default {
     }
   }
 
-  &-wrapper {
+  &__wrapper {
     display: flex;
     flex-grow: 1;
   }
 
-  &-field {
+  &__field {
     display: flex;
     position: relative;
     border: 1px solid $border-color;
@@ -237,7 +236,7 @@ export default {
       background-color: lighten($input-color, 2%);
     }
 
-    &.#{$component}-field--invalid {
+    &.#{$component}__field--invalid {
       border-color: lighten($error, 25%);
     }
   }
@@ -252,56 +251,56 @@ export default {
     text-align: center;
   }
 
-  &-suffix,
-  &-prefix {
+  &__suffix,
+  &__prefix {
     padding: $spacing;
     background-color: $input-color;
     color: darken($border-color, 25%);
   }
 
-  &-suffix {
+  &__suffix {
     border-left: 1px solid $border-color;
     flex-shrink: 0;
   }
 
-  &-prefix {
+  &__prefix {
     border-right: 1px solid $border-color;
     flex-shrink: 0;
   }
 
-  &-validation {
+  &__validation {
     display: flex;
     align-items: center;
     padding-right: $spacing;
 
-    .#{$component}-field--invalid & {
+    .#{$component}__field--invalid & {
       color: $error;
     }
 
-    .#{$component}-field--valid & {
+    .#{$component}__field--valid & {
       color: $success;
     }
   }
 
-  &-validation-message {
+  &__validation-message {
     color: $error;
     margin-top: 0.5em;
     font-size: 0.8em;
   }
 
-  &-icon {
+  &__icon {
     display: flex;
     justify-content: center;
     align-items: center;
     padding-left: $spacing;
   }
 
-  &-value {
+  &__value {
     display: flex;
     flex-grow: 1;
   }
 
-  &-element {
+  &__element {
     font: inherit;
     padding: $spacing;
     color: inherit;
