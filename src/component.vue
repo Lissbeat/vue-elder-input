@@ -15,8 +15,8 @@
           'elder-input__field--focus': focused,
           'elder-input__field--disabled': isDisabled,
           'elder-input__field--readonly': isReadonly,
-          'elder-input__field--valid': hasValidation && valid,
-          'elder-input__field--invalid': hasValidation && !valid,
+          'elder-input__field--valid': hasValidation && validComp,
+          'elder-input__field--invalid': hasValidation && !validComp,
         }"
       >
         <label :for="id" v-if="hasPrefix" class="elder-input__prefix">
@@ -46,7 +46,7 @@
           </slot>
         </div>
         <label v-if="hasValidation" :for="id" class="elder-input__validation">
-          <font-awesome-icon :icon="['fas', valid ? 'check-circle' : 'times-circle']" />
+          <font-awesome-icon :icon="['fas', validComp ? 'check-circle' : 'times-circle']" />
         </label>
         <label :for="id" v-if="hasSuffix" class="elder-input__suffix">
           <slot name="suffix">{{ suffix }}</slot>
@@ -55,7 +55,7 @@
       <slot name="right"></slot>
     </div>
     <slot name="below"></slot>
-    <div v-if="hasValidation && hasValidationMessage && !valid" class="elder-input__validation-message">
+    <div v-if="hasValidation && hasValidationMessage && !validComp" class="elder-input__validation-message">
       <slot name="validation-message">{{ validationMessage }}</slot>
     </div>
   </div>
@@ -80,6 +80,7 @@ export default {
       type: Object,
       default: () => ({}),
     },
+    isValid: Boolean,
     validate: [Boolean, Function],
     validateImmediate: Boolean,
     validationMessage: String,
@@ -106,6 +107,12 @@ export default {
       if ([null, undefined].includes(this.value)) return ''
       return this.value.toString()
     },
+    validComp() {
+      return this.hasIsValidProp ? this.isValid : this.valid
+    },
+    hasIsValidProp() {
+      return 'isValid' in this.$options.propsData
+    },
     component() {
       if (this.hasMask) return 'i-mask-component'
       return 'input'
@@ -127,7 +134,7 @@ export default {
     },
     hasValidation() {
       if (!this.isRequired && !this.value) return false
-      return this.visited && this.validate
+      return this.visited && (this.validate || this.hasIsValidProp)
     },
     isDisabled: AttributeBoolean('disabled'),
     isRequired: AttributeBoolean('required'),
