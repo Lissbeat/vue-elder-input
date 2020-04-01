@@ -305,6 +305,10 @@ export default {
   &__value {
     display: flex;
     flex-grow: 1;
+
+    & > * {
+      flex-grow: 1;
+    }
   }
 
   &__element {
@@ -315,7 +319,6 @@ export default {
     background-color: transparent;
     outline: none;
     -webkit-appearance: none;
-    flex-grow: 1;
     width: 100%;
 
     &::-webkit-input-placeholder {
