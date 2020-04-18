@@ -31,12 +31,9 @@
           <slot>
             <component
               :is="component"
-              :value="valueComp"
-              v-on="{
-                ...$listeners,
-                input: update,
-              }"
+              v-on="{ ...$listeners }"
               v-bind="{ ...$attrs, ...mask, type, id }"
+              v-model="valueComp"
               class="elder-input__element"
               :class="['elder-input--alignment-' + this.align]"
               ref="input"
@@ -65,6 +62,7 @@
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { IMaskComponent } from 'vue-imask'
 import { AttributeBoolean } from './utils'
+import InputComponent from './Input'
 
 import './icons'
 
@@ -103,9 +101,16 @@ export default {
     },
   },
   computed: {
-    valueComp() {
-      if ([null, undefined].includes(this.value)) return ''
-      return this.value.toString()
+    valueComp: {
+      get() {
+        if ([null, undefined].includes(this.value)) return ''
+        return this.value.toString()
+      },
+      set(val) {
+        if (this.type === 'number' || this.mask.mask === Number) val = parseFloat(val)
+        this.lastInternalUpdate = val
+        this.$emit('input', val)
+      },
     },
     validComp() {
       return this.hasIsValidProp ? this.isValid : this.valid
@@ -114,8 +119,8 @@ export default {
       return 'isValid' in this.$options.propsData
     },
     component() {
-      if (this.hasMask) return 'i-mask-component'
-      return 'input'
+      if (this.hasMask) return IMaskComponent
+      return InputComponent
     },
     hasMask() {
       return this.mask.mask
@@ -150,12 +155,6 @@ export default {
     }
   },
   methods: {
-    update(val) {
-      let result = val.target ? val.target.value : val
-      if (this.type === 'number' || this.mask.mask === Number) result = parseFloat(result)
-      this.lastInternalUpdate = result
-      this.$emit('input', result)
-    },
     validateValue() {
       if (!this.validate) return
 
