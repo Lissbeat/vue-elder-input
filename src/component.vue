@@ -185,7 +185,7 @@ export default {
 
 :root {
   @include GenerateVariables();
-  @include GenerateVariable('input-color', lighten(var(--vue-elder-border-color), 4%));
+  @include GenerateVariable('input-color', lighten(GetVariable('border-color'), 4%));
 }
 
 .elder-input {
@@ -193,7 +193,7 @@ export default {
   $spacing: 1.1em;
 
   text-align: left;
-  color: var(--vue-elder-text-color);
+  color: GetVariable('text-color');
   display: flex;
   flex-direction: column;
 
@@ -203,7 +203,7 @@ export default {
     margin-bottom: 0.5em;
 
     &-required {
-      color: var(--vue-elder-error);
+      color: GetVariable('error');
     }
   }
 
@@ -215,8 +215,8 @@ export default {
   &__field {
     display: flex;
     position: relative;
-    border: 1px solid var(--vue-elder-border-color);
-    border-radius: var(--vue-elder-border-radius);
+    border: 1px solid GetVariable('border-color');
+    border-radius: GetVariable('border-radius');
     flex-grow: 1;
     background-color: white;
 
@@ -229,19 +229,19 @@ export default {
     }
 
     &--focus {
-      border-color: var(--vue-elder-primary);
+      border-color: GetVariable('primary');
     }
 
     &--readonly .#{$component}-value {
-      color: rgba(var(--vue-elder-text-color), 0.6);
+      color: rgba(GetVariable('text-color'), 0.6);
     }
 
     &--disabled {
-      background-color: lighten(var(--vue-elder-input-color), 2%);
+      background-color: lighten(GetVariable('input-color'), 2%);
     }
 
     &.#{$component}__field--invalid {
-      border-color: lighten(var(--vue-elder-error), 25%);
+      border-color: lighten(GetVariable('error'), 25%);
     }
   }
 
@@ -258,17 +258,17 @@ export default {
   &__suffix,
   &__prefix {
     padding: $spacing;
-    background-color: var(--vue-elder-input-color);
-    color: darken(var(--vue-elder-border-color), 25%);
+    background-color: GetVariable('input-color');
+    color: darken(GetVariable('border-color'), 25%);
   }
 
   &__suffix {
-    border-left: 1px solid var(--vue-elder-border-color);
+    border-left: 1px solid GetVariable('border-color');
     flex-shrink: 0;
   }
 
   &__prefix {
-    border-right: 1px solid var(--vue-elder-border-color);
+    border-right: 1px solid GetVariable('border-color');
     flex-shrink: 0;
   }
 
@@ -278,16 +278,16 @@ export default {
     padding-right: $spacing;
 
     .#{$component}__field--invalid & {
-      color: var(--vue-elder-error);
+      color: GetVariable('error');
     }
 
     .#{$component}__field--valid & {
-      color: var(--vue-elder-success);
+      color: GetVariable('success');
     }
   }
 
   &__validation-message {
-    color: var(--vue-elder-error);
+    color: GetVariable('error');
     margin-top: 0.5em;
     font-size: 0.8em;
   }
@@ -319,16 +319,16 @@ export default {
     width: 100%;
 
     &::-webkit-input-placeholder {
-      color: rgba(var(--vue-elder-text-color), 0.4);
+      color: rgba(GetVariable('text-color'), 0.4);
     }
     &::-moz-placeholder {
-      color: rgba(var(--vue-elder-text-color), 0.4);
+      color: rgba(GetVariable('text-color'), 0.4);
     }
     &:-ms-input-placeholder {
-      color: rgba(var(--vue-elder-text-color), 0.4);
+      color: rgba(GetVariable('text-color'), 0.4);
     }
     &:-moz-placeholder {
-      color: rgba(var(--vue-elder-text-color), 0.4);
+      color: rgba(GetVariable('text-color'), 0.4);
     }
   }
 }
