@@ -26,10 +26,5 @@ $states: (
 
   @each $state in $states {
     @include GenerateVariable(nth($state, 1), nth($state, 2));
-    @include GenerateVariable('#{nth($state, 1)}-contrast', nth($state, 3));
-    @include GenerateVariable('#{nth($state, 1)}-border', nth($state, 4));
-    @include GenerateVariable('#{nth($state, 1)}-hover', nth($state, 5));
-    @include GenerateVariable('#{nth($state, 1)}-active', nth($state, 6));
-    @include GenerateVariable('#{nth($state, 1)}-focus', nth($state, 7));
   }
 }
