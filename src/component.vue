@@ -185,21 +185,24 @@ export default {
 
 :root {
   @include GenerateVariables();
-  @include GenerateVariable('input-color', lighten(GetVariable('border-color'), 4%));
 }
 
 .elder-input {
   $component: 'elder-input';
   $spacing: 1.1em;
 
-  text-align: left;
-  color: GetVariable('text-color');
   display: flex;
   flex-direction: column;
 
+  text-align: left;
+
+  color: GetVariable('text-color');
+
   &__label {
-    display: block;
     font-weight: bold;
+
+    display: block;
+
     margin-bottom: 0.5em;
 
     &-required {
@@ -213,11 +216,13 @@ export default {
   }
 
   &__field {
-    display: flex;
     position: relative;
+
+    display: flex;
+    flex-grow: 1;
+
     border: 1px solid GetVariable('border-color');
     border-radius: GetVariable('border-radius');
-    flex-grow: 1;
     background-color: white;
 
     &:not(:first-child) {
@@ -233,15 +238,29 @@ export default {
     }
 
     &--readonly .#{$component}-value {
-      color: rgba(GetVariable('text-color'), 0.6);
+      color: GetVariable('input-prefix-color');
     }
 
     &--disabled {
-      background-color: lighten(GetVariable('input-color'), 2%);
+      position: relative;
+
+      &:before {
+        position: absolute;
+        top: 0;
+        left: 0;
+
+        width: 100%;
+        height: 100%;
+
+        content: '';
+
+        opacity: 0.4;
+        background-color: GetVariable('input-color');
+      }
     }
 
     &.#{$component}__field--invalid {
-      border-color: lighten(GetVariable('error'), 25%);
+      border-color: GetVariable('error');
     }
   }
 
@@ -258,23 +277,27 @@ export default {
   &__suffix,
   &__prefix {
     padding: $spacing;
+
+    color: GetVariable('input-prefix-color');
     background-color: GetVariable('input-color');
-    color: darken(GetVariable('border-color'), 25%);
   }
 
   &__suffix {
-    border-left: 1px solid GetVariable('border-color');
     flex-shrink: 0;
+
+    border-left: 1px solid GetVariable('border-color');
   }
 
   &__prefix {
-    border-right: 1px solid GetVariable('border-color');
     flex-shrink: 0;
+
+    border-right: 1px solid GetVariable('border-color');
   }
 
   &__validation {
     display: flex;
     align-items: center;
+
     padding-right: $spacing;
 
     .#{$component}__field--invalid & {
@@ -287,15 +310,18 @@ export default {
   }
 
   &__validation-message {
-    color: GetVariable('error');
-    margin-top: 0.5em;
     font-size: 0.8em;
+
+    margin-top: 0.5em;
+
+    color: GetVariable('error');
   }
 
   &__icon {
     display: flex;
-    justify-content: center;
     align-items: center;
+    justify-content: center;
+
     padding-left: $spacing;
   }
 
@@ -310,25 +336,28 @@ export default {
 
   &__element {
     font: inherit;
+
+    width: 100%;
     padding: $spacing;
+
     color: inherit;
     border: none;
-    background-color: transparent;
     outline: none;
+    background-color: transparent;
+
     -webkit-appearance: none;
-    width: 100%;
 
     &::-webkit-input-placeholder {
-      color: rgba(GetVariable('text-color'), 0.4);
+      color: GetVariable('input-prefix-color');
     }
     &::-moz-placeholder {
-      color: rgba(GetVariable('text-color'), 0.4);
+      color: GetVariable('input-prefix-color');
     }
     &:-ms-input-placeholder {
-      color: rgba(GetVariable('text-color'), 0.4);
+      color: GetVariable('input-prefix-color');
     }
     &:-moz-placeholder {
-      color: rgba(GetVariable('text-color'), 0.4);
+      color: GetVariable('input-prefix-color');
     }
   }
 }
