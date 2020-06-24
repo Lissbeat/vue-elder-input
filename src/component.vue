@@ -181,31 +181,32 @@ export default {
 </script>
 
 <style lang="scss">
+@import './main';
+
+:root {
+  @include GenerateVariables();
+}
+
 .elder-input {
   $component: 'elder-input';
-
-  $primary: #3a9acd !default;
-  $success: #33ca62 !default;
-  $error: #e83b35 !default;
-  $text-color: #222 !default;
-  $border-color: #eaeaea !default;
-  $border-radius: 3px !default;
   $spacing: 1.1em;
 
-  $input-color: lighten($border-color, 4%);
-
-  text-align: left;
-  color: $text-color;
   display: flex;
   flex-direction: column;
 
+  text-align: left;
+
+  color: GetVariable('text-color');
+
   &__label {
-    display: block;
     font-weight: bold;
+
+    display: block;
+
     margin-bottom: 0.5em;
 
     &-required {
-      color: $error;
+      color: GetVariable('error');
     }
   }
 
@@ -215,11 +216,13 @@ export default {
   }
 
   &__field {
-    display: flex;
     position: relative;
-    border: 1px solid $border-color;
-    border-radius: $border-radius;
+
+    display: flex;
     flex-grow: 1;
+
+    border: 1px solid GetVariable('border-color');
+    border-radius: GetVariable('border-radius');
     background-color: white;
 
     &:not(:first-child) {
@@ -231,19 +234,33 @@ export default {
     }
 
     &--focus {
-      border-color: $primary;
+      border-color: GetVariable('primary');
     }
 
     &--readonly .#{$component}-value {
-      color: rgba($text-color, 0.6);
+      color: GetVariable('input-prefix-color');
     }
 
     &--disabled {
-      background-color: lighten($input-color, 2%);
+      position: relative;
+
+      &:before {
+        position: absolute;
+        top: 0;
+        left: 0;
+
+        width: 100%;
+        height: 100%;
+
+        content: '';
+
+        opacity: 0.4;
+        background-color: GetVariable('input-color');
+      }
     }
 
     &.#{$component}__field--invalid {
-      border-color: lighten($error, 25%);
+      border-color: GetVariable('error');
     }
   }
 
@@ -260,44 +277,51 @@ export default {
   &__suffix,
   &__prefix {
     padding: $spacing;
-    background-color: $input-color;
-    color: darken($border-color, 25%);
+
+    color: GetVariable('input-prefix-color');
+    background-color: GetVariable('input-color');
   }
 
   &__suffix {
-    border-left: 1px solid $border-color;
     flex-shrink: 0;
+
+    border-left: 1px solid GetVariable('border-color');
   }
 
   &__prefix {
-    border-right: 1px solid $border-color;
     flex-shrink: 0;
+
+    border-right: 1px solid GetVariable('border-color');
   }
 
   &__validation {
     display: flex;
     align-items: center;
+
     padding-right: $spacing;
 
     .#{$component}__field--invalid & {
-      color: $error;
+      color: GetVariable('error');
     }
 
     .#{$component}__field--valid & {
-      color: $success;
+      color: GetVariable('success');
     }
   }
 
   &__validation-message {
-    color: $error;
-    margin-top: 0.5em;
     font-size: 0.8em;
+
+    margin-top: 0.5em;
+
+    color: GetVariable('error');
   }
 
   &__icon {
     display: flex;
-    justify-content: center;
     align-items: center;
+    justify-content: center;
+
     padding-left: $spacing;
   }
 
@@ -312,25 +336,28 @@ export default {
 
   &__element {
     font: inherit;
+
+    width: 100%;
     padding: $spacing;
+
     color: inherit;
     border: none;
-    background-color: transparent;
     outline: none;
+    background-color: transparent;
+
     -webkit-appearance: none;
-    width: 100%;
 
     &::-webkit-input-placeholder {
-      color: rgba($text-color, 0.4);
+      color: GetVariable('input-prefix-color');
     }
     &::-moz-placeholder {
-      color: rgba($text-color, 0.4);
+      color: GetVariable('input-prefix-color');
     }
     &:-ms-input-placeholder {
-      color: rgba($text-color, 0.4);
+      color: GetVariable('input-prefix-color');
     }
     &:-moz-placeholder {
-      color: rgba($text-color, 0.4);
+      color: GetVariable('input-prefix-color');
     }
   }
 }
