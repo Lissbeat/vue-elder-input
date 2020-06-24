@@ -181,10 +181,19 @@ export default {
 </script>
 
 <style lang="scss">
-@import './main';
+$variables: (
+  'primary': #3a9acd,
+  'success': #33ca62,
+  'error': #e83b35,
+  'border-radius': 3px,
+  'border-color': #eaeaea,
+  'text-color': #222,
+  'input-color': #f2f2f2,
+  'input-prefix-color': rgba(black, 0.3),
+);
 
-:root {
-  @include GenerateVariables();
+@function GetVariable($key) {
+  @return var(--vue-elder-#{$key}, map-get($variables, $key));
 }
 
 .elder-input {
