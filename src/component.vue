@@ -51,10 +51,10 @@
       </div>
       <slot name="right"></slot>
     </div>
-    <slot name="below"></slot>
     <div v-if="hasValidation && hasValidationMessage && !validComp" class="elder-input__validation-message">
       <slot name="validation-message">{{ validationMessage }}</slot>
     </div>
+    <slot name="below"></slot>
   </div>
 </template>
 
