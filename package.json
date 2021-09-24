@@ -30,6 +30,7 @@
     "vue-imask": "^6.0.0"
   },
   "devDependencies": {
+    "@vue/composition-api": "^1.2.2",
     "cz-conventional-changelog": "^3.0.2",
     "semantic-release": "^15.14.0",
     "semantic-release-cli": "^5.2.3"
