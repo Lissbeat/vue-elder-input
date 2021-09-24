@@ -35,7 +35,7 @@
               v-bind="{ ...$attrs, ...mask, type, id }"
               v-model="valueComp"
               class="elder-input__element"
-              :class="['elder-input--alignment-' + this.align]"
+              :class="['elder-input--alignment-' + align]"
               ref="input"
               @focus="onFocus"
               @blur="onBlur"
