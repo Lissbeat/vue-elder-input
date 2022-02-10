@@ -4,6 +4,9 @@
       {{ label }}
       <span v-if="isRequired" class="elder-input__label-required">*</span>
     </label>
+    <p v-if="hasSublabel" class="elder-input__sub-label">
+      <slot name="sub-label">{{ subLabel }}</slot>
+    </p>
     <div class="elder-input__wrapper">
       <slot name="left"></slot>
       <div
@@ -90,6 +93,7 @@ export default {
       default: 'left',
       enum: ['left', 'right', 'center'],
     },
+    subLabel: String,
   },
   watch: {
     value: {
@@ -140,6 +144,9 @@ export default {
     hasValidation() {
       if (!this.isRequired && !this.value) return false
       return this.visited && (this.validate || this.hasIsValidProp)
+    },
+    hasSublabel() {
+      return this.subLabel || this.$slots['sub-label']
     },
     isDisabled: AttributeBoolean('disabled'),
     isRequired: AttributeBoolean('required'),
@@ -197,9 +204,6 @@ $variables: (
 }
 
 .elder-input {
-  $component: 'elder-input';
-  $spacing: 1.1em;
-
   display: flex;
   flex-direction: column;
 
@@ -207,16 +211,26 @@ $variables: (
 
   color: GetVariable('text-color');
 
+  $component: 'elder-input';
+  $spacing: 1.1em;
+
   &__label {
     font-weight: bold;
 
     display: block;
 
-    margin-bottom: 0.5em;
-
     &-required {
       color: GetVariable('error');
     }
+  }
+
+  &__sub-label {
+    font-size: 0.8em;
+
+    margin: 0.15em 0 0 0;
+    letter-spacing: 0.25px;
+
+    opacity: 0.5;
   }
 
   &__wrapper {
@@ -229,6 +243,8 @@ $variables: (
 
     display: flex;
     flex-grow: 1;
+
+    margin-top: 0.5em;
 
     border: 1px solid GetVariable('border-color');
     border-radius: GetVariable('border-radius');
