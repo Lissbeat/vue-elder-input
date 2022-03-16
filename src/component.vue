@@ -3,6 +3,7 @@
     <label :for="id" v-if="label" class="elder-input__label">
       {{ label }}
       <span v-if="isRequired" class="elder-input__label-required">*</span>
+      <slot name="after-label"></slot>
     </label>
     <span v-if="hasSublabel" class="elder-input__sublabel">
       <slot name="sublabel">{{ sublabel }}</slot>
