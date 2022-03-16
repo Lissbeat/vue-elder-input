@@ -36,7 +36,7 @@
             <component
               :is="component"
               v-on="{ ...$listeners }"
-              v-bind="{ ...$attrs, ...mask, type, id }"
+              v-bind="{ ...$attrs, ...maskComp, type, id }"
               v-model="valueComp"
               class="elder-input__element"
               :class="['elder-input--alignment-' + align]"
@@ -115,7 +115,7 @@ export default {
         return this.value.toString()
       },
       set(val) {
-        if (this.type === 'number' || this.mask.mask === Number) val = parseFloat(val)
+        if (this.type === 'number' || this.maskComp.mask === Number) val = parseFloat(val)
         this.lastInternalUpdate = val
         this.$emit('input', val)
       },
@@ -131,7 +131,7 @@ export default {
       return InputComponent
     },
     hasMask() {
-      return this.mask.mask
+      return this.maskComp.mask
     },
     hasPrefix() {
       return this.prefix || this.$slots.prefix
@@ -151,6 +151,14 @@ export default {
     },
     hasSublabel() {
       return this.sublabel || this.$slots.sublabel
+    },
+    maskComp() {
+      if (!Object.keys(this.mask).length) return this.mask
+
+      return {
+        ...this.mask,
+        mask: this.mask.mask === "Number" ? Number : this.mask.mask
+      }
     },
     isDisabled: AttributeBoolean('disabled'),
     isRequired: AttributeBoolean('required'),
@@ -208,15 +216,15 @@ $variables: (
 }
 
 .elder-input {
+  $component: "elder-input";
+  $spacing: 1.1em;
+
   display: flex;
   flex-direction: column;
 
   text-align: left;
 
   color: GetVariable("text-color");
-
-  $component: "elder-input";
-  $spacing: 1.1em;
 
   &__label {
     font-weight: bold;
@@ -238,6 +246,7 @@ $variables: (
   &__wrapper {
     display: flex;
     flex-grow: 1;
+    margin-top: 0.5em;
   }
 
   &__field {
@@ -245,8 +254,6 @@ $variables: (
 
     display: flex;
     flex-grow: 1;
-
-    margin-top: 0.5em;
 
     border: 1px solid GetVariable("border-color");
     border-radius: GetVariable("border-radius");
