@@ -246,7 +246,10 @@ $variables: (
   &__wrapper {
     display: flex;
     flex-grow: 1;
-    margin-top: 0.5em;
+
+    &:not(:first-child) {
+      margin-top: 0.5em;
+    }
   }
 
   &__field {
