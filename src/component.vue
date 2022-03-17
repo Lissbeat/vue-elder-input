@@ -229,7 +229,8 @@ $variables: (
   &__label {
     font-weight: bold;
 
-    display: block;
+    display: flex;
+    gap: $spacing / 2;
 
     &-required {
       color: GetVariable("error");
