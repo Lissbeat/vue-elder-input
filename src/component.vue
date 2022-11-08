@@ -32,7 +32,7 @@
           </slot>
         </label>
         <div class="elder-input__value">
-          <slot>
+          <slot :onBlur="onBlur" :onFocus="onFocus">
             <component
               :is="component"
               v-on="{ ...$listeners }"
@@ -55,10 +55,7 @@
       </div>
       <slot name="right"></slot>
     </div>
-    <div
-      v-if="hasValidation && hasValidationMessage && !validComp"
-      class="elder-input__validation-message"
-    >
+    <div v-if="hasValidation && hasValidationMessage && !validComp" class="elder-input__validation-message">
       <slot name="validation-message">{{ validationMessage }}</slot>
     </div>
     <slot name="below"></slot>
@@ -157,7 +154,7 @@ export default {
 
       return {
         ...this.mask,
-        mask: this.mask.mask === "Number" ? Number : this.mask.mask
+        mask: this.mask.mask === 'Number' ? Number : this.mask.mask,
       }
     },
     isDisabled: AttributeBoolean('disabled'),
@@ -201,14 +198,14 @@ export default {
 
 <style lang="scss">
 $variables: (
-  "primary": #3a9acd,
-  "success": #33ca62,
-  "error": #e83b35,
-  "border-radius": 3px,
-  "border-color": #eaeaea,
-  "text-color": #222,
-  "input-color": #f2f2f2,
-  "input-prefix-color": rgba(black, 0.3)
+  'primary': #3a9acd,
+  'success': #33ca62,
+  'error': #e83b35,
+  'border-radius': 3px,
+  'border-color': #eaeaea,
+  'text-color': #222,
+  'input-color': #f2f2f2,
+  'input-prefix-color': rgba(black, 0.3),
 );
 
 @function GetVariable($key) {
@@ -216,7 +213,7 @@ $variables: (
 }
 
 .elder-input {
-  $component: "elder-input";
+  $component: 'elder-input';
   $spacing: 1.1em;
 
   display: flex;
@@ -224,7 +221,7 @@ $variables: (
 
   text-align: left;
 
-  color: GetVariable("text-color");
+  color: GetVariable('text-color');
 
   &__label {
     font-weight: bold;
@@ -233,7 +230,7 @@ $variables: (
     gap: $spacing / 2;
 
     &-required {
-      color: GetVariable("error");
+      color: GetVariable('error');
     }
   }
 
@@ -259,8 +256,8 @@ $variables: (
     display: flex;
     flex-grow: 1;
 
-    border: 1px solid GetVariable("border-color");
-    border-radius: GetVariable("border-radius");
+    border: 1px solid GetVariable('border-color');
+    border-radius: GetVariable('border-radius');
     background-color: white;
 
     &:not(:first-child) {
@@ -272,11 +269,11 @@ $variables: (
     }
 
     &--focus {
-      border-color: GetVariable("primary");
+      border-color: GetVariable('primary');
     }
 
     &--readonly .#{$component}-value {
-      color: GetVariable("input-prefix-color");
+      color: GetVariable('input-prefix-color');
     }
 
     &--disabled {
@@ -290,15 +287,15 @@ $variables: (
         width: 100%;
         height: 100%;
 
-        content: "";
+        content: '';
 
         opacity: 0.4;
-        background-color: GetVariable("input-color");
+        background-color: GetVariable('input-color');
       }
     }
 
     &.#{$component}__field--invalid {
-      border-color: GetVariable("error");
+      border-color: GetVariable('error');
     }
   }
 
@@ -316,20 +313,20 @@ $variables: (
   &__prefix {
     padding: $spacing;
 
-    color: GetVariable("input-prefix-color");
-    background-color: GetVariable("input-color");
+    color: GetVariable('input-prefix-color');
+    background-color: GetVariable('input-color');
   }
 
   &__suffix {
     flex-shrink: 0;
 
-    border-left: 1px solid GetVariable("border-color");
+    border-left: 1px solid GetVariable('border-color');
   }
 
   &__prefix {
     flex-shrink: 0;
 
-    border-right: 1px solid GetVariable("border-color");
+    border-right: 1px solid GetVariable('border-color');
   }
 
   &__validation {
@@ -339,11 +336,11 @@ $variables: (
     padding-right: $spacing;
 
     .#{$component}__field--invalid & {
-      color: GetVariable("error");
+      color: GetVariable('error');
     }
 
     .#{$component}__field--valid & {
-      color: GetVariable("success");
+      color: GetVariable('success');
     }
   }
 
@@ -352,7 +349,7 @@ $variables: (
 
     margin-top: 0.5em;
 
-    color: GetVariable("error");
+    color: GetVariable('error');
   }
 
   &__icon {
@@ -386,16 +383,16 @@ $variables: (
     -webkit-appearance: none;
 
     &::-webkit-input-placeholder {
-      color: GetVariable("input-prefix-color");
+      color: GetVariable('input-prefix-color');
     }
     &::-moz-placeholder {
-      color: GetVariable("input-prefix-color");
+      color: GetVariable('input-prefix-color');
     }
     &:-ms-input-placeholder {
-      color: GetVariable("input-prefix-color");
+      color: GetVariable('input-prefix-color');
     }
     &:-moz-placeholder {
-      color: GetVariable("input-prefix-color");
+      color: GetVariable('input-prefix-color');
     }
   }
 }
