@@ -43,7 +43,7 @@
           </slot>
         </div>
         <label v-if="hasValidation" :for="id" class="elder-input__validation">
-          <font-awesome-icon :icon="['fas', validComp ? 'check-circle' : 'times-circle']" />
+          <Icon :icon="['fas', validComp ? 'check-circle' : 'times-circle']" />
         </label>
         <label :for="id" v-if="hasSuffix" class="elder-input__suffix">
           <slot name="suffix">{{ suffix }}</slot>
@@ -51,10 +51,7 @@
       </div>
       <slot name="right"></slot>
     </div>
-    <div
-      v-if="hasValidation && hasValidationMessage && !validComp"
-      class="elder-input__validation-message"
-    >
+    <div v-if="hasValidation && hasValidationMessage && !validComp" class="elder-input__validation-message">
       <slot name="validation-message">{{ validationMessage }}</slot>
     </div>
     <slot name="below"></slot>
@@ -62,12 +59,10 @@
 </template>
 
 <script>
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import Icon from '@kvass/vue2-icon/src/Legacy'
 import { IMaskComponent } from 'vue-imask'
 import { AttributeBoolean } from './utils'
 import InputComponent from './Input'
-
-import './icons'
 
 export default {
   props: {
@@ -149,7 +144,7 @@ export default {
 
       return {
         ...this.mask,
-        mask: this.mask.mask === "Number" ? Number : this.mask.mask
+        mask: this.mask.mask === 'Number' ? Number : this.mask.mask,
       }
     },
     isDisabled: AttributeBoolean('disabled'),
@@ -185,7 +180,7 @@ export default {
     this.id = this._uid
   },
   components: {
-    FontAwesomeIcon,
+    Icon,
     IMaskComponent,
   },
 }
@@ -193,14 +188,14 @@ export default {
 
 <style lang="scss">
 $variables: (
-  "primary": #3a9acd,
-  "success": #33ca62,
-  "error": #e83b35,
-  "border-radius": 3px,
-  "border-color": #eaeaea,
-  "text-color": #222,
-  "input-color": #f2f2f2,
-  "input-prefix-color": rgba(black, 0.3)
+  'primary': #3a9acd,
+  'success': #33ca62,
+  'error': #e83b35,
+  'border-radius': 3px,
+  'border-color': #eaeaea,
+  'text-color': #222,
+  'input-color': #f2f2f2,
+  'input-prefix-color': rgba(black, 0.3),
 );
 
 @function GetVariable($key) {
@@ -208,7 +203,7 @@ $variables: (
 }
 
 .elder-input {
-  $component: "elder-input";
+  $component: 'elder-input';
   $spacing: 1.1em;
 
   display: flex;
@@ -216,7 +211,7 @@ $variables: (
 
   text-align: left;
 
-  color: GetVariable("text-color");
+  color: GetVariable('text-color');
 
   &__label {
     font-weight: bold;
@@ -226,7 +221,7 @@ $variables: (
     margin-bottom: 0.5em;
 
     &-required {
-      color: GetVariable("error");
+      color: GetVariable('error');
     }
   }
 
@@ -241,8 +236,8 @@ $variables: (
     display: flex;
     flex-grow: 1;
 
-    border: 1px solid GetVariable("border-color");
-    border-radius: GetVariable("border-radius");
+    border: 1px solid GetVariable('border-color');
+    border-radius: GetVariable('border-radius');
     background-color: white;
 
     &:not(:first-child) {
@@ -254,11 +249,11 @@ $variables: (
     }
 
     &--focus {
-      border-color: GetVariable("primary");
+      border-color: GetVariable('primary');
     }
 
     &--readonly .#{$component}-value {
-      color: GetVariable("input-prefix-color");
+      color: GetVariable('input-prefix-color');
     }
 
     &--disabled {
@@ -272,15 +267,15 @@ $variables: (
         width: 100%;
         height: 100%;
 
-        content: "";
+        content: '';
 
         opacity: 0.4;
-        background-color: GetVariable("input-color");
+        background-color: GetVariable('input-color');
       }
     }
 
     &.#{$component}__field--invalid {
-      border-color: GetVariable("error");
+      border-color: GetVariable('error');
     }
   }
 
@@ -298,20 +293,20 @@ $variables: (
   &__prefix {
     padding: $spacing;
 
-    color: GetVariable("input-prefix-color");
-    background-color: GetVariable("input-color");
+    color: GetVariable('input-prefix-color');
+    background-color: GetVariable('input-color');
   }
 
   &__suffix {
     flex-shrink: 0;
 
-    border-left: 1px solid GetVariable("border-color");
+    border-left: 1px solid GetVariable('border-color');
   }
 
   &__prefix {
     flex-shrink: 0;
 
-    border-right: 1px solid GetVariable("border-color");
+    border-right: 1px solid GetVariable('border-color');
   }
 
   &__validation {
@@ -321,11 +316,11 @@ $variables: (
     padding-right: $spacing;
 
     .#{$component}__field--invalid & {
-      color: GetVariable("error");
+      color: GetVariable('error');
     }
 
     .#{$component}__field--valid & {
-      color: GetVariable("success");
+      color: GetVariable('success');
     }
   }
 
@@ -334,7 +329,7 @@ $variables: (
 
     margin-top: 0.5em;
 
-    color: GetVariable("error");
+    color: GetVariable('error');
   }
 
   &__icon {
@@ -368,16 +363,16 @@ $variables: (
     -webkit-appearance: none;
 
     &::-webkit-input-placeholder {
-      color: GetVariable("input-prefix-color");
+      color: GetVariable('input-prefix-color');
     }
     &::-moz-placeholder {
-      color: GetVariable("input-prefix-color");
+      color: GetVariable('input-prefix-color');
     }
     &:-ms-input-placeholder {
-      color: GetVariable("input-prefix-color");
+      color: GetVariable('input-prefix-color');
     }
     &:-moz-placeholder {
-      color: GetVariable("input-prefix-color");
+      color: GetVariable('input-prefix-color');
     }
   }
 }
