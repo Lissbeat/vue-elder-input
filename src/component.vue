@@ -59,7 +59,7 @@
 </template>
 
 <script>
-import Icon from '@kvass/vue2-icon/src/Legacy'
+import Icon from '@kvass/vue2-icon'
 import { IMaskComponent } from 'vue-imask'
 import { AttributeBoolean } from './utils'
 import InputComponent from './Input'
