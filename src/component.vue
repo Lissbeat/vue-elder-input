@@ -3,7 +3,11 @@
     <label :for="id" v-if="label" class="elder-input__label">
       {{ label }}
       <span v-if="isRequired" class="elder-input__label-required">*</span>
+      <slot name="after-label"></slot>
     </label>
+    <span v-if="hasSublabel" class="elder-input__sublabel">
+      <slot name="sublabel">{{ sublabel }}</slot>
+    </span>
     <div class="elder-input__wrapper">
       <slot name="left"></slot>
       <div
@@ -28,7 +32,7 @@
           </slot>
         </label>
         <div class="elder-input__value">
-          <slot>
+          <slot :onBlur="onBlur" :onFocus="onFocus">
             <component
               :is="component"
               v-on="{ ...$listeners }"
@@ -88,6 +92,7 @@ export default {
       default: 'left',
       enum: ['left', 'right', 'center'],
     },
+    sublabel: String,
   },
   watch: {
     value: {
@@ -138,6 +143,9 @@ export default {
     hasValidation() {
       if (!this.isRequired && !this.value) return false
       return this.visited && (this.validate || this.hasIsValidProp)
+    },
+    hasSublabel() {
+      return this.sublabel || this.$slots.sublabel
     },
     maskComp() {
       if (!Object.keys(this.mask).length) return this.mask
@@ -216,18 +224,28 @@ $variables: (
   &__label {
     font-weight: bold;
 
-    display: block;
-
-    margin-bottom: 0.5em;
+    display: flex;
+    gap: $spacing / 2;
 
     &-required {
       color: GetVariable('error');
     }
   }
 
+  &__sublabel {
+    font-size: 0.9em;
+    display: block;
+
+    opacity: 0.5;
+  }
+
   &__wrapper {
     display: flex;
     flex-grow: 1;
+
+    &:not(:first-child) {
+      margin-top: 0.5em;
+    }
   }
 
   &__field {
